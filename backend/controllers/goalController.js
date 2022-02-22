@@ -11,9 +11,14 @@ const getGoals = (req,res)=>{
 // @desc    Set Goal
 // @Route   POST /api/goals
 const setGoal = (req,res)=>{
+    if (!req.body.text) {
+        res.status(400)
+        throw new Error("Please add text field")
+    }
+
     res.status(200).json({
         goal: "Goal CREATED",
-        message: "This is the POST route"
+        text: req.body.text,
     })
 }
 
