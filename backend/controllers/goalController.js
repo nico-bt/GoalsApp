@@ -1,11 +1,13 @@
 const Goal = require("../models/goalModel")
 
+// req.user is filled when user log in
+
 // @desc    Get Goal
 // @Route   GET /api/goals
 // **************************************************
 const getGoals = async (req,res)=>{
     try {
-        const goals = await Goal.find({})
+        const goals = await Goal.find({user: req.user._id})
         res.status(200).json(goals)
     } 
     catch (error) {
@@ -24,7 +26,8 @@ const setGoal = async (req,res)=>{
             // throw new Error("Please add text field")
         }
         const newGoal = await Goal.create({
-            text: req.body.text
+            text: req.body.text,
+            user: req.user._id
         })
         res.status(200).json(newGoal)
         }

@@ -71,7 +71,7 @@ const loginUser = async (req, res)=>{
 // @Route   GET /api/users/me
 // **************************************************
 const getMe = async (req, res)=>{
-    res.json({message: "Display user data!"})
+    res.json(req.user)
 }
 
 // Generate JWT (jsonWebToken). Payload is going to be id
