@@ -13,8 +13,14 @@ const authorize = async (req, res, next)=>{
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
             if (decoded) {
-                // Get user id from token, get user info from DB and assign it to req.user
-                req.user = await User.findById(decoded.id).select("-password")
+                // Get user id from token, then get user info from DB and assign it to req.user
+                const foundUser = await User.findById(decoded.id).select("-password")
+                
+                if(!foundUser){
+                    return res.status(401).json({message: "Not Authorized. User not found"})
+                }
+                
+                req.user = foundUser
                 next()
             } else {
                 res.status(401).json({message: "Not Authorized"})
