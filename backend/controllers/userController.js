@@ -16,7 +16,6 @@ const registerUser = async (req, res)=>{
         //Check if user already exists
         const alreadyExists = await User.findOne({email})
         if(alreadyExists){
-            console.log(alreadyExists)
             return res.status(400).json({message: "User already exist with that email"})
         }
 
@@ -28,10 +27,15 @@ const registerUser = async (req, res)=>{
         const newUser = await User.create({
             name, 
             email, 
-            password: hashedPassword
+            password: hashedPassword,
         })
         if(newUser){
-            res.status(201).json({message: "Register USER!", name, id: newUser._id})
+            res.status(201).json({
+                message: "Register USER!", 
+                name: newUser.name, 
+                id: newUser._id,
+                token: generateToken(newUser._id)
+            })
         } else {
             res.status(400).json({message: "Something went wrong accessing database. Please try again"})
         }
@@ -44,7 +48,23 @@ const registerUser = async (req, res)=>{
 // @Route   POST /api/users/login
 // **************************************************
 const loginUser = async (req, res)=>{
-    res.json({message: "Login USER!"})
+    try {
+        const {email, password} = req.body
+        const user = await User.findOne({email})
+
+        //Check if user exists and if input-password vs. hashed-password in database match
+        if (user && (await bcrypt.compare(password, user.password))) {
+            res.status(200).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                token: generateToken(user._id)
+            })
+        } else {
+            res.status(400).json({message: "Invalid credentials"})
+        }
+    } catch (error) {
+    }
 }
 
 // @desc    Get User data
@@ -52,6 +72,12 @@ const loginUser = async (req, res)=>{
 // **************************************************
 const getMe = async (req, res)=>{
     res.json({message: "Display user data!"})
+}
+
+// Generate JWT (jsonWebToken). Payload is going to be id
+// **********************************************************
+const generateToken = (id)=>{
+    return jwt.sign({ id }, process.env.JWT_SECRET, {expiresIn: "30d"})
 }
 
 
