@@ -1,12 +1,14 @@
 const Goal = require("../models/goalModel")
+const User = require("../models/userModel")
 
-// req.user is filled when user log in
+// req.user is filled when user log in with authMiddelware.js
 
 // @desc    Get Goal
 // @Route   GET /api/goals
 // **************************************************
 const getGoals = async (req,res)=>{
     try {
+        // Find goals belonging to the logged user
         const goals = await Goal.find({user: req.user._id})
         res.status(200).json(goals)
     } 
@@ -42,13 +44,17 @@ const setGoal = async (req,res)=>{
 const updateGoal = async (req,res)=>{
     try {
         const goal = await Goal.findById(req.params.id)
+        
         if (!goal) {
-            res.status(400).json({message: "Goal not found. No such ID"})
-            return
-        } else{
-            const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, {text: req.body.text}, {new: true})
-            res.status(200).json(updatedGoal)
+            return res.status(400).json({message: "Goal not found. No such ID"})
         }
+        
+        if(goal.user.toString() !== req.user._id){
+            return res.status(401).json({message: "User not Authorized to update other people's goals"})
+        }
+
+        const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, {text: req.body.text}, {new: true})
+        res.status(200).json(updatedGoal)
     }
     catch (error) {
         console.log(error)
