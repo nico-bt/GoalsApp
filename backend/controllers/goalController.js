@@ -46,10 +46,12 @@ const updateGoal = async (req,res)=>{
         const goal = await Goal.findById(req.params.id)
         
         if (!goal) {
-            return res.status(400).json({message: "Goal not found. No such ID"})
+            return res.status(404).json({message: "Goal not found. No such ID"})
         }
         
-        if(goal.user.toString() !== req.user._id){
+        // Check if (user owner of the goal) == (user logged trying to update)
+        // obs: ._id in MongoDB are type ObjectID --> for compare need to use ".toString()" or can be used a mongooseMethod
+        if(goal.user.toString() !== req.user._id.toString()){
             return res.status(401).json({message: "User not Authorized to update other people's goals"})
         }
 
@@ -57,8 +59,11 @@ const updateGoal = async (req,res)=>{
         res.status(200).json(updatedGoal)
     }
     catch (error) {
-        console.log(error)
+        if(error.name == "CastError"){
+            return res.status(404).json({message: "Goal not found. No such ID"})
+        }
         res.status(400).json(error)
+        console.log(error)
     }
 }
 
@@ -67,16 +72,26 @@ const updateGoal = async (req,res)=>{
 // **************************************************
 const deleteGoal = async (req,res)=>{
     try {
-        const deletedGoal = await Goal.findByIdAndDelete(req.params.id)
-        if(!deletedGoal){
-            res.status(400).json({message: "Not such id", id: req.params.id})
-        }
-        res.status(200).json({message: "Deleted", id: deletedGoal._id})
+        const goal = await Goal.findById(req.params.id)
 
+        if (!goal) {
+            return res.status(404).json({message: "Goal not found. No such ID"})
+        }
+
+        // Check if (user owner of the goal) == (user logged trying to delete)
+        if(goal.user.toString() !== req.user._id.toString()){
+            return res.status(401).json({message: "User not Authorized to delete other people's goals"})
+        }
+
+        const deletedGoal = await Goal.findByIdAndDelete(req.params.id)
+        res.status(200).json({message: "Deleted", id: deletedGoal._id, text: deletedGoal.text})
     } 
     catch (error) {
-        console.log(error)
+        if(error.name == "CastError"){
+            return res.status(404).json({message: "Goal not found. No such ID"})
+        }
         res.status(400).json(error)
+        console.log(error)
     }
 }
 
