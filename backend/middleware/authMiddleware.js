@@ -13,7 +13,7 @@ const authorize = async (req, res, next)=>{
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
             if (decoded) {
-                // Get user id from token and assign it to req.user
+                // Get user id from token, get user info from DB and assign it to req.user
                 req.user = await User.findById(decoded.id).select("-password")
                 next()
             } else {
