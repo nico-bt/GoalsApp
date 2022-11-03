@@ -41,6 +41,7 @@ const registerUser = async (req, res)=>{
         }
     } catch (error) {
         console.log(error)
+        res.json(error)
     }
 }
 
@@ -64,6 +65,7 @@ const loginUser = async (req, res)=>{
             res.status(400).json({message: "Invalid credentials"})
         }
     } catch (error) {
+        res.json(error)
     }
 }
 

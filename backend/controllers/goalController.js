@@ -23,9 +23,7 @@ const getGoals = async (req,res)=>{
 const setGoal = async (req,res)=>{
     try {
         if (!req.body.text) {
-            res.status(400).json({message: "Add text VALUE!"})
-            return
-            // throw new Error("Please add text field")
+            return res.status(400).json({message: "Add text VALUE!"})
         }
         const newGoal = await Goal.create({
             text: req.body.text,
@@ -35,6 +33,7 @@ const setGoal = async (req,res)=>{
         }
     catch (error) {
         console.log(error)
+        res.json(error)
     }
 }
 
