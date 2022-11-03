@@ -1,7 +1,9 @@
+// require("dotenv").config()
+const path = require('path')
+require('dotenv').config({path: path.join(__dirname, '../.env'), debug: true})
 const { urlencoded } = require("express")
 const express = require("express")
 const {errorHandler} = require("./middleware/errorMiddleware")
-const dotenv = require("dotenv").config()
 const port=process.env.PORT || 5000
 
 // DATABASE CONNECTION
