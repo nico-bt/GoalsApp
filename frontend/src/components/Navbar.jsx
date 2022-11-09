@@ -1,13 +1,15 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa'
+import { FaSignInAlt, FaSignOutAlt, FaUser, FaHome } from 'react-icons/fa'
 
 function Navbar() {
   return (
     <header className='header'>
-        <div className='logo'>
-            <Link to='/'>Home</Link>
-        </div>
+        <ul>
+            <li>
+                <Link to='/'> <FaHome /> Home </Link>
+            </li>
+        </ul>
         <ul>
             <li>
                 <Link to={"/login"}> <FaSignInAlt /> Log in</Link>
