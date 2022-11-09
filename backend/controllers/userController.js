@@ -2,6 +2,8 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcryptjs") //for hash password
 const User = require("../models/userModel")
 
+// req.user is filled when user log in with authMiddelware.js
+
 // @desc    Create new User
 // @Route   POST /api/users
 // **************************************************
