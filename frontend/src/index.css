@@ -108,6 +108,13 @@ h3 {
   background: none;
 }
 
+.close {
+  font-size: 24px;
+}
+.close:hover {
+  color:red;
+}
+
 .form,
 .content {
   width: 70%;
